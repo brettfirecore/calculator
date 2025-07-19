@@ -1,9 +1,13 @@
 package calculator_test
 
 import (
-	"calculator"
+	// Standard lib (even blank imports)
+	_ "fmt"
 	"testing"
-	_"time"
+	_ "time"
+
+	// Local or third-party
+	"calculator"
 )
 
 func TestAdd(t *testing.T) {
