@@ -1,0 +1,9 @@
+# Ignore binaries and build artifacts
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dll
+*.log
+vendor/
