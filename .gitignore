@@ -6,4 +6,5 @@
 *.so
 *.dll
 *.log
+*.bak.go
 vendor/
