@@ -1,4 +1,4 @@
-package calculator_test
+package calculator
 
 import (
 	"testing"
@@ -78,7 +78,7 @@ func TestDivide(t *testing.T) {
 		{a: 10, b: 2, want: 5},
 	}
 	for _, tc := range testCases {
-		got, err := calculator.Divide(tc.a, tc.b)
+		got := calculator.Divide(tc.a, tc.b)
 		if err != nil {
 			t.Fatalf("want no error for valid input, got %v", err)
 		}
