@@ -8,12 +8,13 @@ A simple Go-based calculator with basic arithmetic operations.
 ## 🚀 Features
 
 - Add, subtract, multiply, divide
+- Square root (with error handling)
 - Modular structure
 - Unit tests included
 
-## 🛠️ Installation
+## 🛠️ Installation & Usage
 
 ```bash
 git clone https://github.com/brettfirecore/calculator.git
 cd calculator
-go run .
+go run ./cmd/calculator
