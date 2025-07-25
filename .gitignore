@@ -1,10 +1,19 @@
-# Ignore binaries and build artifacts
+# Binaries
 *.exe
-*.out
-*.o
-*.a
-*.so
+*.exe~
 *.dll
-*.log
-*.bak.go
+*.so
+*.dylib
+*.test
+
+# Output of go build
+/bin/
+/build/
+
+# Dependency directories
 vendor/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
