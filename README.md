@@ -1,20 +1,18 @@
-# 🧮 Calculator
+# calculator
 
-A simple Go-based calculator with basic arithmetic operations.
+[![Go CI](https://github.com/brettfirecore/calculator/actions/workflows/ci.yml/badge.svg)](https://github.com/brettfirecore/calculator/actions/workflows/ci.yml)
 
-![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)
-![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
+A simple Go module providing basic arithmetic operations with error handling.
 
-## 🚀 Features
+## Features
 
-- Add, subtract, multiply, divide
-- Square root (with error handling)
-- Modular structure
-- Unit tests included
+- `Add(a, b float64) float64`
+- `Subtract(a, b float64) float64`
+- `Multiply(a, b float64) float64`
+- `Divide(a, b float64) (float64, error)`
+- `Sqrt(x float64) (float64, error)`
 
-## 🛠️ Installation & Usage
+## Installation
 
 ```bash
-git clone https://github.com/brettfirecore/calculator.git
-cd calculator
-go run ./cmd/calculator
+go get github.com/brettfirecore/calculator/calculator
