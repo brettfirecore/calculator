@@ -1,0 +1,35 @@
+name: Go CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.22.x']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+
+      - name: Tidy modules
+        run: go mod tidy && git diff --quiet || (echo "::error::run go mod tidy locally and commit changes" && exit 1)
+
+      - name: Format check
+        run: |
+          gofmt -l . | tee /dev/stderr | (! read)
+      
+      - name: Vet
+        run: go vet ./...
+
+      - name: Unit tests
+        run: go test ./...
+
+      - name: Benchmarks (calculator only)
+        run: go test -bench . -run '^$' ./calculator
