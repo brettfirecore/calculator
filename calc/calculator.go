@@ -1,3 +1,4 @@
+// Package calculator provides basic float64 arithmetic with simple error handling.
 package calculator
 
 import (
