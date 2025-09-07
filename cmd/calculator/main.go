@@ -1,48 +1,54 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"log"
-
-	"github.com/brettfirecore/calculator/calculator"
+	"os"
 )
 
 func main() {
-	// Add
-	sum := calculator.Add(2, 3)
-	fmt.Printf("2 + 3 = %v\n", sum)
+	path := "testdata/somefile.txt"
 
-	// Subtract
-	diff := calculator.Subtract(10, 4)
-	fmt.Printf("10 - 4 = %v\n", diff)
-
-	// Multiply
-	product := calculator.Multiply(6, 7)
-	fmt.Printf("6 * 7 = %v\n", product)
-
-	// Divide
-	quotient, err := calculator.Divide(20, 5)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("20 / 5 = %v\n", quotient)
-
-	// Divide by zero (error case)
-	_, err = calculator.Divide(10, 0)
-	if err != nil {
-		fmt.Printf("Divide by zero error: %v\n", err)
+	// Step 1: Read and print the file line by line
+	fmt.Println("Current file contents:")
+	if err := printFile(path); err != nil {
+		fmt.Println("error reading file:", err)
+		return
 	}
 
-	// Square root
-	root, err := calculator.Sqrt(81)
+	// Step 2: Append a new line
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("error opening file for append:", err)
+		return
 	}
-	fmt.Printf("√81 = %v\n", root)
+	defer f.Close()
 
-	// Square root of negative number (error case)
-	_, err = calculator.Sqrt(-9)
-	if err != nil {
-		fmt.Printf("Sqrt of negative error: %v\n", err)
+	newLine := "Appended from Go!\n"
+	if _, err := f.WriteString(newLine); err != nil {
+		fmt.Println("error writing to file:", err)
+		return
 	}
+	fmt.Println("✔ Wrote new line:", newLine)
+
+	// Step 3: Show the updated file
+	fmt.Println("\nUpdated file contents:")
+	if err := printFile(path); err != nil {
+		fmt.Println("error reading file:", err)
+	}
+}
+
+// Helper function: read a file line by line and print it
+func printFile(path string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+	return scanner.Err()
 }
