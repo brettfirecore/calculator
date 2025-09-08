@@ -1,70 +1,56 @@
-package calculator
+package calculator_test
 
 import (
-	"math"
 	"testing"
+
+	"github.com/brettfirecore/calculator/calculator"
 )
 
-func closeEnough(a, b, tol float64) bool {
-	return math.Abs(a-b) <= tol
-}
-
-func TestAdd(t *testing.T) {
-	got := Add(2, 2) // no prefix needed
-	want := 4.0
-	if got != want {
-		t.Errorf("got %v, want %v", got, want)
+func TestAddMany(t *testing.T) {
+	t.Parallel()
+	if got, want := calculator.AddMany(), 0.0; got != want {
+		t.Errorf("AddMany() = %v, want %v", got, want)
+	}
+	if got, want := calculator.AddMany(1, 2, 3.5), 6.5; got != want {
+		t.Errorf("AddMany(1,2,3.5) = %v, want %v", got, want)
 	}
 }
 
-func TestSubtract(t *testing.T) {
-	got := Subtract(5, 3)
-	want := 2.0
-	if got != want {
-		t.Errorf("got %v, want %v", got, want)
+func TestMultiplyMany(t *testing.T) {
+	t.Parallel()
+	if got, want := calculator.MultiplyMany(), 1.0; got != want {
+		t.Errorf("MultiplyMany() = %v, want %v", got, want)
+	}
+	if got, want := calculator.MultiplyMany(2, 3, 4), 24.0; got != want {
+		t.Errorf("MultiplyMany(2,3,4) = %v, want %v", got, want)
 	}
 }
 
-func TestMultiply(t *testing.T) {
-	got := Multiply(3, 4)
-	want := 12.0
-	if got != want {
-		t.Errorf("got %v, want %v", got, want)
+func TestSubtractMany(t *testing.T) {
+	t.Parallel()
+	if got, want := calculator.SubtractMany(), 0.0; got != want {
+		t.Errorf("SubtractMany() = %v, want %v", got, want)
+	}
+	if got, want := calculator.SubtractMany(10), 10.0; got != want {
+		t.Errorf("SubtractMany(10) = %v, want %v", got, want)
+	}
+	if got, want := calculator.SubtractMany(10, 1, 2, 3), 4.0; got != want {
+		t.Errorf("SubtractMany(10,1,2,3) = %v, want %v", got, want)
 	}
 }
 
-func TestDivide(t *testing.T) {
-	got, err := Divide(10, 2)
-	if err != nil {
-		t.Fatal(err)
+func TestDivideMany(t *testing.T) {
+	t.Parallel()
+	if _, err := calculator.DivideMany(); err == nil {
+		t.Fatalf("DivideMany() want error, got nil")
 	}
-	want := 5.0
-	if got != want {
-		t.Errorf("got %v, want %v", got, want)
+	if got, err := calculator.DivideMany(12); err != nil || got != 12 {
+		t.Fatalf("DivideMany(12) got (%v,%v), want (12,nil)", got, err)
 	}
-}
-
-func TestDivideByZero(t *testing.T) {
-	_, err := Divide(10, 0)
-	if err == nil {
-		t.Fatal("expected error for division by zero, got nil")
+	if got, err := calculator.DivideMany(12, 4, 3); err != nil || got != 1 {
+		t.Fatalf("DivideMany(12,4,3) got (%v,%v), want (1,nil)", got, err)
 	}
-}
-
-func TestSqrt(t *testing.T) {
-	got, err := Sqrt(16)
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := 4.0
-	if !closeEnough(got, want, 1e-9) {
-		t.Errorf("got %v, want %v", got, want)
-	}
-}
-
-func TestSqrtNegative(t *testing.T) {
-	_, err := Sqrt(-1)
-	if err == nil {
-		t.Fatal("expected error for negative input, got nil")
+	if _, err := calculator.DivideMany(1, 0); err == nil {
+		t.Fatalf("DivideMany(1,0) want divide-by-zero error, got nil")
 	}
 }

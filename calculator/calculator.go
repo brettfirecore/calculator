@@ -2,41 +2,85 @@
 package calculator
 
 import (
-	"errors"
+	"fmt"
 	"math"
 )
 
-// Add returns the sum of two float64 numbers.
+// --- Basic two-arg API (what your tests expect) ---
+
 func Add(a, b float64) float64 {
 	return a + b
 }
 
-// Multiply returns the product of two float64 numbers.
-func Multiply(a, b float64) float64 {
-	return a * b
-}
-
-// Subtract returns the result of subtracting b from a.
 func Subtract(a, b float64) float64 {
 	return a - b
 }
 
-// Divide returns the result of dividing a by b.
-// If b is zero, it returns an error to avoid division by zero.
+func Multiply(a, b float64) float64 {
+	return a * b
+}
+
 func Divide(a, b float64) (float64, error) {
 	if b == 0 {
-		// Return 0 and an error if division by zero is attempted
-		return 0, errors.New("division by zero not allowed")
+		return 0, fmt.Errorf("divide by zero")
 	}
-	// Return the result of the division and no error
 	return a / b, nil
 }
 
-// Sqrt returns the square root of a float64 value.
-// It returns an error if the input is negative.
 func Sqrt(x float64) (float64, error) {
 	if x < 0 {
-		return 0, errors.New("square root of negative number not allowed")
+		return 0, fmt.Errorf("square root of negative number")
 	}
 	return math.Sqrt(x), nil
+}
+
+// --- Variadic versions (your new API) ---
+
+func AddMany(inputs ...float64) float64 {
+	var sum float64
+	for _, v := range inputs {
+		sum += v
+	}
+	return sum
+}
+
+func MultiplyMany(inputs ...float64) float64 {
+	prod := 1.0
+	for _, v := range inputs {
+		prod *= v
+	}
+	return prod
+}
+
+func SubtractMany(inputs ...float64) float64 {
+	switch len(inputs) {
+	case 0:
+		return 0
+	case 1:
+		return inputs[0]
+	default:
+		res := inputs[0]
+		for _, v := range inputs[1:] {
+			res -= v
+		}
+		return res
+	}
+}
+
+func DivideMany(inputs ...float64) (float64, error) {
+	switch len(inputs) {
+	case 0:
+		return 0, fmt.Errorf("DivideMany: need at least one input")
+	case 1:
+		return inputs[0], nil
+	default:
+		res := inputs[0]
+		for _, v := range inputs[1:] {
+			if v == 0 {
+				return 0, fmt.Errorf("DivideMany: divide by zero")
+			}
+			res /= v
+		}
+		return res, nil
+	}
 }
