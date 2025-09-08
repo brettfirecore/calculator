@@ -1,56 +1,99 @@
 package calculator_test
 
 import (
-	"testing"
+    "testing"
 
-	"github.com/brettfirecore/calculator/calculator"
+    "github.com/brettfirecore/calculator/calculator"
 )
 
 func TestAddMany(t *testing.T) {
-	t.Parallel()
-	if got, want := calculator.AddMany(), 0.0; got != want {
-		t.Errorf("AddMany() = %v, want %v", got, want)
-	}
-	if got, want := calculator.AddMany(1, 2, 3.5), 6.5; got != want {
-		t.Errorf("AddMany(1,2,3.5) = %v, want %v", got, want)
-	}
-}
-
-func TestMultiplyMany(t *testing.T) {
-	t.Parallel()
-	if got, want := calculator.MultiplyMany(), 1.0; got != want {
-		t.Errorf("MultiplyMany() = %v, want %v", got, want)
-	}
-	if got, want := calculator.MultiplyMany(2, 3, 4), 24.0; got != want {
-		t.Errorf("MultiplyMany(2,3,4) = %v, want %v", got, want)
-	}
+    t.Parallel()
+    type testCase struct {
+        inputs []float64
+        want   float64
+    }
+    cases := []testCase{
+        {[]float64{}, 0},
+        {[]float64{2}, 2},
+        {[]float64{2, 2}, 4},
+        {[]float64{1, 2, 3}, 6},
+    }
+    for _, tc := range cases {
+        got := calculator.AddMany(tc.inputs...)
+        if tc.want != got {
+            t.Errorf("AddMany(%v): want %f, got %f", tc.inputs, tc.want, got)
+        }
+    }
 }
 
 func TestSubtractMany(t *testing.T) {
-	t.Parallel()
-	if got, want := calculator.SubtractMany(), 0.0; got != want {
-		t.Errorf("SubtractMany() = %v, want %v", got, want)
-	}
-	if got, want := calculator.SubtractMany(10), 10.0; got != want {
-		t.Errorf("SubtractMany(10) = %v, want %v", got, want)
-	}
-	if got, want := calculator.SubtractMany(10, 1, 2, 3), 4.0; got != want {
-		t.Errorf("SubtractMany(10,1,2,3) = %v, want %v", got, want)
-	}
+    t.Parallel()
+    type testCase struct {
+        inputs []float64
+        want   float64
+    }
+    cases := []testCase{
+        {[]float64{}, 0},
+        {[]float64{2}, 2},
+        {[]float64{2, 2}, 0},
+        {[]float64{1, 2, 3}, -4},
+    }
+    for _, tc := range cases {
+        got := calculator.SubtractMany(tc.inputs...)
+        if tc.want != got {
+            t.Errorf("SubtractMany(%v): want %f, got %f", tc.inputs, tc.want, got)
+        }
+    }
+}
+
+func TestMultiplyMany(t *testing.T) {
+    t.Parallel()
+    type testCase struct {
+        inputs []float64
+        want   float64
+    }
+    cases := []testCase{
+        {[]float64{}, 0},
+        {[]float64{2}, 2},
+        {[]float64{2, 2}, 4},
+        {[]float64{1, 2, 3, 4}, 24},
+    }
+    for _, tc := range cases {
+        got := calculator.MultiplyMany(tc.inputs...)
+        if tc.want != got {
+            t.Errorf("MultiplyMany(%v): want %f, got %f", tc.inputs, tc.want, got)
+        }
+    }
 }
 
 func TestDivideMany(t *testing.T) {
-	t.Parallel()
-	if _, err := calculator.DivideMany(); err == nil {
-		t.Fatalf("DivideMany() want error, got nil")
-	}
-	if got, err := calculator.DivideMany(12); err != nil || got != 12 {
-		t.Fatalf("DivideMany(12) got (%v,%v), want (12,nil)", got, err)
-	}
-	if got, err := calculator.DivideMany(12, 4, 3); err != nil || got != 1 {
-		t.Fatalf("DivideMany(12,4,3) got (%v,%v), want (1,nil)", got, err)
-	}
-	if _, err := calculator.DivideMany(1, 0); err == nil {
-		t.Fatalf("DivideMany(1,0) want divide-by-zero error, got nil")
-	}
+    t.Parallel()
+    type testCase struct {
+        inputs []float64
+        want   float64
+    }
+    cases := []testCase{
+        {[]float64{}, 0},
+        {[]float64{2}, 2},
+        {[]float64{2, 2}, 1},
+        {[]float64{-1, -1}, 1},
+        {[]float64{100, 5, 2}, 10},
+    }
+    for _, tc := range cases {
+        got, err := calculator.DivideMany(tc.inputs...)
+        if err != nil {
+            t.Fatalf("DivideMany(%v): want no error for valid input, got %v", tc.inputs, err)
+        }
+        if tc.want != got {
+            t.Errorf("DivideMany(%v): want %f, got %f", tc.inputs, tc.want, got)
+        }
+    }
+}
+
+func TestDivideManyInvalid(t *testing.T) {
+    t.Parallel()
+    _, err := calculator.DivideMany(10, 5, 0, 7)
+    if err == nil {
+        t.Error("DivideMany(10, 5, 0, 7): want error for zero divisor, got nil")
+    }
 }
