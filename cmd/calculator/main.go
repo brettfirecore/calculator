@@ -6,46 +6,41 @@ import (
 	"os"
 )
 
-// writeFile writes some data to a file, and ensures that
-// any error from closing the file is also captured and returned.
+// writeFile writes data and ensures any error from f.Close()
+// can update the returned error. Named result: err.
 func writeFile(path string, data []byte) (err error) {
-	// Create (or truncate) the file
 	f, err := os.Create(path)
 	if err != nil {
-		return // early return if file can't be created
+		return // early return if file couldn't be created
 	}
 
-	// Defer a cleanup function that closes the file.
-	// This can *modify* the named result variable `err`
-	// before the function actually returns.
+	// Defer a closure that captures `err`.
 	defer func() {
-		if cerr := f.Close(); cerr != nil {
+		// Force an artificial close error for demonstration:
+		// (In real life, f.Close() may fail e.g. on full disk)
+		closeErr := errors.New("simulated close failure")
+
+		// If f.Close() fails and no prior error, overwrite err.
+		if closeErr != nil {
 			if err == nil {
-				// If no error so far, return the close error
-				err = cerr
+				err = closeErr
 			} else {
-				// If both writing and closing failed, join errors (Go 1.20+)
-				err = errors.Join(err, cerr)
-				// For older Go versions, use fmt.Errorf:
-				// err = fmt.Errorf("%w; also close error: %v", err, cerr)
+				// If both write and close failed, join them (Go 1.20+).
+				err = errors.Join(err, closeErr)
 			}
 		}
 	}()
 
-	// Try writing the data to the file
+	// Do the actual write
 	if _, werr := f.Write(data); werr != nil {
-		// Assign to named result `err` (not := to avoid shadowing!)
-		err = werr
+		err = werr // assign to the named result, not shadowed
 		return
 	}
 
-	// Naked return — returns current value of `err`
-	// (nil if no error happened, or a real error if set above).
-	return
+	return // naked return: err may still be updated by the defer
 }
 
 func main() {
-	// Call writeFile and check for error
 	if err := writeFile("testdata/out.txt", []byte("hello\n")); err != nil {
 		fmt.Println("writeFile error:", err)
 		return
