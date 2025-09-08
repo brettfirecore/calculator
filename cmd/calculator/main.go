@@ -1,22 +1,54 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"os"
+)
 
-func divide(a, b int) (quotient int, remainder int, err error) {
-	if b == 0 {
-		err = fmt.Errorf("cannot divide by zero")
+// writeFile writes some data to a file, and ensures that
+// any error from closing the file is also captured and returned.
+func writeFile(path string, data []byte) (err error) {
+	// Create (or truncate) the file
+	f, err := os.Create(path)
+	if err != nil {
+		return // early return if file can't be created
+	}
+
+	// Defer a cleanup function that closes the file.
+	// This can *modify* the named result variable `err`
+	// before the function actually returns.
+	defer func() {
+		if cerr := f.Close(); cerr != nil {
+			if err == nil {
+				// If no error so far, return the close error
+				err = cerr
+			} else {
+				// If both writing and closing failed, join errors (Go 1.20+)
+				err = errors.Join(err, cerr)
+				// For older Go versions, use fmt.Errorf:
+				// err = fmt.Errorf("%w; also close error: %v", err, cerr)
+			}
+		}
+	}()
+
+	// Try writing the data to the file
+	if _, werr := f.Write(data); werr != nil {
+		// Assign to named result `err` (not := to avoid shadowing!)
+		err = werr
 		return
 	}
-	quotient = a / b
-	remainder = a % b
-	return // naked return: returns quotient, remainder, err
+
+	// Naked return — returns current value of `err`
+	// (nil if no error happened, or a real error if set above).
+	return
 }
 
 func main() {
-	q, r, err := divide(17, 5)
-	if err != nil {
-		fmt.Println("error:", err)
+	// Call writeFile and check for error
+	if err := writeFile("testdata/out.txt", []byte("hello\n")); err != nil {
+		fmt.Println("writeFile error:", err)
 		return
 	}
-	fmt.Printf("Quotient: %d, Remainder: %d\n", q, r)
+	fmt.Println("writeFile succeeded")
 }
