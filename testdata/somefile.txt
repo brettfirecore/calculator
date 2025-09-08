@@ -1,8 +1,0 @@
-Hello from Go!
-This is line 2.
-And line 3.
-And line 4. bippity boo
-Appended from Go!
-Appended from Go!
-This is line 2.
-And line 3.
