@@ -5,6 +5,12 @@
 *.so
 *.dylib
 *.test
+*.out
+
+
+# Local files
+demo.txt
+out.txt
 
 # Output of go build
 /bin/

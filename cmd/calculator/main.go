@@ -2,62 +2,20 @@ package main
 
 import (
 	"fmt"
-	_"math" // --- Uncomment math for 7. Naked return discouraged, but sqrt works
 	"os"
+	// "github.com/brettfirecore/calculator/calculator"
 )
 
-// 1. Simple function declaration
-func add(a, b int) int {
-	return a + b
-}
-
-// 2. Early return with error
-func safeDivide(a, b float64) (float64, error) {
-	if b == 0 {
-		return 0, fmt.Errorf("cannot divide by zero")
-	}
-	return a / b, nil
-}
-
-// 3. Functions as values
-func operate(a, b int, fn func(int, int) int) int {
-	return fn(a, b)
-}
-
-// 4. Closure
-func makeMultiplier(factor int) func(int) int {
-	return func(x int) int {
-		return x * factor
-	}
-}
-
-// 5. Defer for cleanup
-func writeFileDemo() (err error) {
-	f, err := os.Create("demo.txt")
-	if err != nil {
-		return
-	}
-	defer func() {
-		if cerr := f.Close(); cerr != nil {
-			if err == nil {
-				err = cerr
-			}
-		}
-	}()
-	_, err = f.WriteString("Hello, Go!\n")
-	return
-}
-
-// 6. Variadic function
-func sumAll(nums ...int) int {
-	total := 0
-	for _, n := range nums {
-		total += n
-	}
-	return total
-}
+// build-time fields (must come AFTER the import block)
+var (
+	version   = "dev" // overridden by -ldflags: -X 'main.version=...'
+	buildDate = ""    // overridden by -ldflags: -X 'main.buildDate=...'
+)
 
 func main() {
+	// Version/build info
+	fmt.Printf("calculator version=%s buildDate=%s\n", version, buildDate)
+
 	// 👉 Uncomment one block at a time to experiment
 
 	// --- 1. Function declaration + call
@@ -88,7 +46,58 @@ func main() {
 	// --- 6. Variadic function
 	// fmt.Println("sumAll(1,2,3,4):", sumAll(1, 2, 3, 4))
 
-	// --- 7. Naked return discouraged, but sqrt works
+	// --- 7. Using math (remember to import "math" if you uncomment)
 	// res := math.Sqrt(16)
 	// fmt.Println("math.Sqrt(16):", res)
+}
+
+// 1. Simple function declaration
+func add(a, b int) int {
+	return a + b
+}
+
+// 2. Early return with error
+func safeDivide(a, b float64) (float64, error) {
+	if b == 0 {
+		return 0, fmt.Errorf("cannot divide by zero")
+	}
+	return a / b, nil
+}
+
+// 3. Functions as values
+func operate(a, b int, fn func(int, int) int) int {
+	return fn(a, b)
+}
+
+// 4. Closure
+func makeMultiplier(factor int) func(int) int {
+	return func(x int) int {
+		return x * factor
+	}
+}
+
+// 5. Defer for cleanup (needs import "os")
+func writeFileDemo() (err error) {
+	f, err := os.Create("demo.txt")
+	if err != nil {
+		return
+	}
+	defer func() {
+		if cerr := f.Close(); cerr != nil {
+			if err == nil {
+				err = cerr
+			}
+		}
+	}()
+	_, err = f.WriteString("Hello, Go!\n")
+	return
+}
+
+// 6. Variadic function
+func sumAll(nums ...int) int {
+	total := 0
+	for _, n := range nums {
+		total += n
+	}
+	return total
 }
