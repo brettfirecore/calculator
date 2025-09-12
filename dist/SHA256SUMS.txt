@@ -1,5 +1,0 @@
-495be488a871111611ac760caedb088b9d80d9385b3ee7a36bf854142612b4c2  calculator-v0.1.1-darwin-arm64
-cdde21beaa9aa633ea6c0915b8fd51aec1f75035f5d63819bf15f19783307966  calculator-v0.1.1-linux-amd64
-341c1ca400492c10bf457212e793e3dcbb1ef98a3aae672d24aef9af649aee6b  calculator-v0.1.1-linux-arm64
-aaafdf65c9e6b8d1ba4046814c4c373f1222f34a9e4db6fbc4ffb275a9a64964  calculator-v0.1.1-windows-amd64.exe
-50efb8309084a9beb5d8c9084473be94fa5c0a7284a1845ca82dd585ef7da11e  calculator-v0.1.1-windows-arm64.exe
