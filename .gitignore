@@ -1,25 +1,14 @@
-# Binaries
+cat > .gitignore <<'EOF'
+# Build output
+dist/
 *.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-*.test
 *.out
 
-
-# Local files
+# Local scratch
 demo.txt
 out.txt
 
-# Output of go build
-/bin/
-/build/
-
-# Dependency directories
-vendor/
-
-# IDE/editor files
+# Editor/IDE
 .vscode/
-.idea/
 *.swp
+EOF

@@ -16,3 +16,7 @@ A simple Go module providing basic arithmetic operations with error handling.
 
 ```bash
 go get github.com/brettfirecore/calculator/calculator
+
+./calculator -op add 1 2 3    # 6
+./calculator -op div 10 2     # 5
+./calculator -op div 10 0     # Error + exit 1

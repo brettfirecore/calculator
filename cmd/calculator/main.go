@@ -1,103 +1,75 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	// "github.com/brettfirecore/calculator/calculator"
+	"strconv"
+	"io"
+	"github.com/brettfirecore/calculator/calculator"
 )
 
-// build-time fields (must come AFTER the import block)
 var (
-	version   = "dev" // overridden by -ldflags: -X 'main.version=...'
-	buildDate = ""    // overridden by -ldflags: -X 'main.buildDate=...'
+	version   = "dev"
+	buildDate = ""
 )
+
+func run(args []string, out io.Writer) error {
+	fs := flag.NewFlagSet("calculator", flag.ContinueOnError)
+	showVersion := fs.Bool("version", false, "print version and exit")
+	op := fs.String("op", "", "operation: add|sub|mul|div")
+	fs.Usage = func() {
+		fmt.Fprintln(fs.Output(), "usage: calculator -op <add|sub|mul|div> <numbers...>")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if *showVersion {
+		fmt.Printf("calculator version=%s buildDate=%s\n", version, buildDate)
+		return nil
+	}
+	if *op == "" {
+		return fmt.Errorf("missing -op (add|sub|mul|div)")
+	}
+	if fs.NArg() == 0 {
+		return fmt.Errorf("provide at least one number")
+	}
+
+	// parse numbers
+	vals := make([]float64, 0, fs.NArg())
+	for _, s := range fs.Args() {
+		n, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			return fmt.Errorf("invalid number %q: %v", s, err)
+		}
+		vals = append(vals, n)
+	}
+
+	switch *op {
+	case "add":
+    		fmt.Fprintln(out, calculator.AddMany(vals...))
+	case "sub":
+    		fmt.Fprintln(out, calculator.SubtractMany(vals...))
+	case "mul":
+    		fmt.Fprintln(out, calculator.MultiplyMany(vals...))
+	case "div":
+    		res, err := calculator.DivideMany(vals...)
+    		if err != nil {
+        		return err
+    		}
+    		fmt.Fprintln(out, res)
+
+	default:
+		return fmt.Errorf("unknown op %q (use add|sub|mul|div)", *op)
+	}
+	return nil
+}
 
 func main() {
-	// Version/build info
-	fmt.Printf("calculator version=%s buildDate=%s\n", version, buildDate)
-
-	// 👉 Uncomment one block at a time to experiment
-
-	// --- 1. Function declaration + call
-	// fmt.Println("add(2,3):", add(2, 3))
-
-	// --- 2. Early return
-	// if res, err := safeDivide(10, 0); err != nil {
-	// 	fmt.Println("safeDivide error:", err)
-	// } else {
-	// 	fmt.Println("safeDivide(10,2):", res)
-	// }
-
-	// --- 3. Functions as values
-	// result := operate(2, 3, add)
-	// fmt.Println("operate(2,3,add):", result)
-
-	// --- 4. Closure
-	// double := makeMultiplier(2)
-	// fmt.Println("double(5):", double(5))
-
-	// --- 5. Defer cleanup
-	// if err := writeFileDemo(); err != nil {
-	// 	fmt.Println("writeFileDemo error:", err)
-	// } else {
-	// 	fmt.Println("writeFileDemo wrote demo.txt")
-	// }
-
-	// --- 6. Variadic function
-	// fmt.Println("sumAll(1,2,3,4):", sumAll(1, 2, 3, 4))
-
-	// --- 7. Using math (remember to import "math" if you uncomment)
-	// res := math.Sqrt(16)
-	// fmt.Println("math.Sqrt(16):", res)
+    if err := run(os.Args[1:], os.Stdout); err != nil {
+        fmt.Fprintln(os.Stderr, "Error:", err)
+        os.Exit(1)
+    }
+    os.Exit(0)
 }
 
-// 1. Simple function declaration
-func add(a, b int) int {
-	return a + b
-}
-
-// 2. Early return with error
-func safeDivide(a, b float64) (float64, error) {
-	if b == 0 {
-		return 0, fmt.Errorf("cannot divide by zero")
-	}
-	return a / b, nil
-}
-
-// 3. Functions as values
-func operate(a, b int, fn func(int, int) int) int {
-	return fn(a, b)
-}
-
-// 4. Closure
-func makeMultiplier(factor int) func(int) int {
-	return func(x int) int {
-		return x * factor
-	}
-}
-
-// 5. Defer for cleanup (needs import "os")
-func writeFileDemo() (err error) {
-	f, err := os.Create("demo.txt")
-	if err != nil {
-		return
-	}
-	defer func() {
-		if cerr := f.Close(); cerr != nil {
-			if err == nil {
-				err = cerr
-			}
-		}
-	}()
-	_, err = f.WriteString("Hello, Go!\n")
-	return
-}
-
-// 6. Variadic function
-func sumAll(nums ...int) int {
-	total := 0
-	for _, n := range nums {
-		total += n
-	}
-	return total
-}
