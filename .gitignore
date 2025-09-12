@@ -13,3 +13,4 @@ out.txt
 *.swp
 EOF
 dist/
+dist/
