@@ -1,0 +1,58 @@
+name: Release (calculator)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write  # needed to create/upload release assets
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"   # or "1.23.x"
+
+      - name: Build cross-platform artifacts
+        run: |
+          set -euo pipefail
+          VERSION="${GITHUB_REF_NAME}"
+          DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          LDFLAGS="-s -w -X 'main.version=${VERSION}' -X 'main.buildDate=${DATE}'"
+
+          TARGETS="linux/amd64 linux/arm64 darwin/arm64 windows/amd64 windows/arm64"
+
+          rm -rf dist
+          mkdir -p dist
+
+          for target in $TARGETS; do
+            GOOS="${target%/*}"
+            GOARCH="${target#*/}"
+            OUT="dist/calculator-${VERSION}-${GOOS}-${GOARCH}"
+            [[ "$GOOS" == "windows" ]] && OUT="${OUT}.exe"
+
+            echo ">> Building ${OUT}"
+            CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" \
+              go build -trimpath -ldflags="$LDFLAGS" -o "$OUT" ./cmd/calculator
+
+            [[ "$GOOS" != "windows" ]] && chmod +x "$OUT"
+          done
+
+          ( cd dist && sha256sum * > SHA256SUMS.txt )
+          ls -lah dist
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
