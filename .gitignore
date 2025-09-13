@@ -1,16 +1,4 @@
-cat > .gitignore <<'EOF'
-# Build output
-dist/
-*.exe
-*.out
-
-# Local scratch
-demo.txt
-out.txt
-
 # Editor/IDE
 .vscode/
 *.swp
 EOF
-dist/
-dist/
