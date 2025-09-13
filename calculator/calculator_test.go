@@ -1,8 +1,9 @@
 package calculator_test
 
 import (
-	"calculator"
 	"testing"
+
+	"github.com/brettfirecore/calculator/calculator"
 )
 
 func TestAddMany(t *testing.T) {
