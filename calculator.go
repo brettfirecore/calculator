@@ -12,3 +12,7 @@ func Add(a, b float64) float64 {
 func Subtract(a, b float64) float64 {
 	return a - b // swap b and a around so its 2 from 4 not 4 from 2 
 }
+
+func Multiply(a, b float64) float64 {
+	return a * b
+}

@@ -27,3 +27,14 @@ func TestSubtract(t *testing.T) {
 		t.Errorf("want %f, got %f", want, got)
 	}
 }
+
+func TestMultiply(t *testing.T) {
+	t.Parallel()
+
+	var want float64 = 9
+	got := calculator.Multiply(3, 3) // 3 times 3 equal 9
+	
+	if got != want {
+		t.Fatalf("got %f want %f", got, want)
+	}
+}
