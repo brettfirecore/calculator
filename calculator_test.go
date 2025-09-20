@@ -3,8 +3,10 @@
 package calculator_test
 
 import (
-	"testing" // Go's standard testing framework
+	"testing"
+
 	"github.com/brettfirecore/calculator" // the package we’re testing
+	// Go's standard testing framework
 )
 
 func TestAdd(t *testing.T) {
@@ -16,19 +18,28 @@ func TestAdd(t *testing.T) {
 		want float64 // expected output
 	}
 
-	// A slice of test cases to try
-	testCases := []testCase{
-		{a: 2, b: 2, want: 4},
-		{a: 1, b: 1, want: 2},
-		{a: 5, b: 0, want: 5},
+	// Create a slice (dynamic array) of testCase values.
+	// []testCase means "a slice of testCase".
+	// := assigns it to the variable testCases.
+	testCases := []testCase{ // [] <--slice
+		// Each element is a struct literal with fields a, b, and want.
+		{a: 2, b: 2, want: 4}, // 2 + 2 should equal 4
+		{a: 1, b: 1, want: 2}, // 1 + 1 should equal 2
+		{a: 5, b: 0, want: 5}, // 5 + 0 should equal 5
 	}
 
-	// Loop through the test cases
+	// Loop over every element in the slice testCases
+	// range testCases gives us two values each time:
+	//  1. the index (0, 1, 2, …)
+	//  2. the element itself (a testCase struct)
+	//
+	// The underscore (_) means "ignore this value" —
+	// here, we don’t care about the index, only the element.
+	// tc will hold each testCase as we go through the slice.
 	for _, tc := range testCases {
-		got := calculator.Add(tc.a, tc.b) // Call the function under test
-		if tc.want != got {                // Compare expected vs actual
+		got := calculator.Add(tc.a, tc.b) // call function with the testCase inputs
+		if tc.want != got {               // compare expected vs actual
 			t.Errorf("Add(%f, %f): want %f, got %f", tc.a, tc.b, tc.want, got)
-			// t.Errorf marks the test as failed but continues execution
 		}
 	}
 }
